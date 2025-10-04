@@ -17,17 +17,31 @@ let getDetails = (req, res) => {
     })
 }
 
-// (get method)
+// (GET method)
 // these is for all colleges dada 
 const getAllColleges = (req,res) => {
     res.status(200).json({ message: `All the colleges within the dataset are`, colleges })
 }
 
+// (GET method)
+// it's used to get any random college
+const getRandomCollege = (req,res) => {
 
+    // console.log("Total colleges:", colleges.length);
+    // console.log("First college:", colleges[0]);
 
+    let randomIndex = Math.floor(Math.random()* colleges.length);
+
+    let result = colleges[randomIndex];
+
+    console.log("Random index:", randomIndex); //it's used for showing the actual index of data which is appear randomly
+
+    res.status(200).json({ message : "Random college you were requesting is ", result})
+
+}
 
 // export in GET method
-export {getDetails,getAllColleges}
+export {getDetails,getAllColleges,getRandomCollege}
 
 // export in POST method
 
