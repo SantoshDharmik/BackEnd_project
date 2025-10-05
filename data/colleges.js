@@ -2,7 +2,7 @@ const colleges = [
     {
 name: "Visvesvaraya National Institute of Technology (VNIT)",
 courses: ["Computer Science, Mechanical, Electrical, Civil, Electronics, Chemical, Metallurgy"],
-duration: "4",
+duration: "2",
 fees_per_year: "1.6 Lakh",
 address: "South Ambazari Road, Nagpur, Maharashtra 440010",
 status: "Government",
@@ -11,7 +11,7 @@ NIRF_ranking: "51"
 {
 name: "Yeshwantrao Chavan College of Engineering (YCCE)",
 courses: ["Computer Science, IT, Mechanical, Civil, Electrical, Electronics, AI/ML"],
-duration: "4",
+duration: "1",
 fees_per_year: "1.45 Lakh",
 address: "Hingna Road, Wanadongri, Nagpur, Maharashtra 441110",
 status: "Autonomous",
@@ -20,7 +20,7 @@ NIRF_ranking: "151"
 {
 name: "Shri Ramdeobaba College of Engineering and Management (RCOEM)",
 courses: ["Computer Science, Mechanical, Civil, Electrical, Electronics, Chemical, AI/ML"],
-duration: "4",
+duration: "3",
 fees_per_year: "1.55 Lakh",
 address: "Katol Road, Nagpur, Maharashtra 440013",
 status: "Autonomous",

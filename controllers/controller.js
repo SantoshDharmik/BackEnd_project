@@ -12,10 +12,81 @@ let getDetails = (req, res) => {
                 method: "GET",
                 address: "localhost/colleges/api/all",
                 expectedResult: "Array"
+            },
+            {
+                method: "GET",
+                address: "localhost/colleges/api/randomCollege",
+                expectedResult: "Array"
             }
         ]
     })
 }
+
+// (GET method)
+// these data is for filter the college
+const getFilterData = (req,res) => {
+    try {
+         
+        let { courses,duration,status } = req.query
+
+        let usercourse = courses
+
+        let resultArray = colleges 
+        //starts as the full languages array
+
+        let queryType = ""  //empty
+
+        if (!courses && !duration && !status) throw ("Filter is invalid !")
+
+// [courses part]  //if courses is exists in the query 
+        if (courses) {
+            resultArray = resultArray.filter(college => {
+                return college.courses.some(element => element.toLowerCase().includes(usercourse.toLowerCase().trim()))
+            })
+            queryType += "/courses"
+        }    
+
+
+// [duration part]  //if duration exists in the query 
+         if (duration) {
+            resultArray = resultArray.filter(college => {
+                return Number(college.duration) === Number(duration)
+            })
+            queryType += "/duration"
+         } 
+
+// [status part]  //if duration exists in the query 
+        if (status) { 
+            resultArray = resultArray.filter((college) => {
+                return college.status.toLowerCase() == status.toLowerCase().trim()
+            })
+
+            queryType += "/status"
+
+        }
+
+
+
+        if (resultArray.length == 0) throw (`unable to find colleges based on ${queryType}`)
+
+        // Send success response
+        res.status(200).json({
+            message: `got result based on ${queryType}`,
+            resultCount: resultArray.length,
+            results: resultArray
+        })
+
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            message: "unable to get data based on filter !",
+            err,
+             possibleFilters: ["?courses","?duration"]
+        })
+
+    }
+}
+
 
 // (GET method)
 // these is for all colleges dada 
@@ -41,7 +112,7 @@ const getRandomCollege = (req,res) => {
 }
 
 // export in GET method
-export {getDetails,getAllColleges,getRandomCollege}
+export {getDetails,getAllColleges,getRandomCollege,getFilterData}
 
 // export in POST method
 

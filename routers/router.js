@@ -1,6 +1,6 @@
 import express from "express"
 
-import { getDetails } from "../controllers/controller.js"
+import { getDetails, getFilterData } from "../controllers/controller.js"
 
 import { getAllColleges, getRandomCollege } from "../controllers/controller.js"
 
@@ -13,5 +13,7 @@ router.get("/all",getAllColleges)
 router.get("/get-details", getDetails)
 
 router.get("/randomCollege", getRandomCollege)
+
+router.get("/filter", getFilterData)
 
 export {router}
