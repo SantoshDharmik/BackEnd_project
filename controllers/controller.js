@@ -43,7 +43,7 @@ let getDetails = (req, res) => {
             {
                 method: "Delete",
                 address: "localhost/colleges/api/delete-college/:name",
-                expectedResult: "Array[add  a new college]"
+                expectedResult: "Array[delete a college]"
             }
 
         ]
@@ -156,7 +156,7 @@ const getRandomCollege = (req, res) => {
 const getCollegeName = (req, res) => {
     try {
 
-        const { name } = req.query; // name comes from URL
+        const { name } = req.params; // name comes from URL
         console.log(name);
 
         if (!name) throw "invalid name! ";

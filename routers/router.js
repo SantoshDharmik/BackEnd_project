@@ -19,7 +19,7 @@ router.get("/randomCollege", getRandomCollege)
 router.get("/filter", getFilterData)
 
 // GET Method router for college name
-router.get("/college", getCollegeName)
+router.get("/college/:name", getCollegeName)
 
 //POST Method router for adding new collge
 router.post("/add-college",postAddCollege)
