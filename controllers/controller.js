@@ -1,4 +1,4 @@
-import { colleges } from "../data/colleges.js"
+import  colleges  from "../data/colleges.js"
 //these code for api conncetion which is present in the folder,that is data.
 
 // we are writing getdetails for to better understand for filtering the data 
@@ -23,7 +23,7 @@ let getDetails = (req, res) => {
                 address: "localhost/colleges/api/filter?scope=value",
                 expectedResult: "Array/Null",
                 queryOptions: [
-                    "courses", "duration[in years]", "status"
+                    "courses", "duration[in years]", "status", "city"
                 ],
                 possibleCourses: ["Computer Science",
                     "Mechanical", "Electrical", "Civil", "Electronics", "Chemical", "Metallurgy", "IT", "AI/ML", "Data Science", "Chemical Technology", "Oil Technology", "Food Technology", "Information Technology", "Electronics & Telecommunication", "Artificial Intelligence & Data Science"
@@ -65,7 +65,7 @@ let getDetails = (req, res) => {
 const getFilterData = (req, res) => {
     try {
 
-        let { courses, duration, status } = req.query
+        let { courses, duration, status, city } = req.query
 
         let usercourse = courses
 
@@ -74,7 +74,7 @@ const getFilterData = (req, res) => {
 
         let queryType = ""  //empty
 
-        if (!courses && !duration && !status) throw ("Filter is invalid !")
+        if (!courses && !duration && !status && !city) throw ("Filter is invalid !")
 
         // [courses part]  //if courses is exists in the query 
         if (courses) {
@@ -82,6 +82,15 @@ const getFilterData = (req, res) => {
                 return college.courses.some(element => element.toLowerCase().includes(usercourse.toLowerCase().trim()))
             })
             queryType += "/courses"
+        }
+
+         // [City part]  //if city is exists in the query 
+        if (city) {
+            resultArray = resultArray.filter((college) => {
+                return college.city.toLowerCase() == city.toLowerCase().trim()
+            })
+
+            queryType += "/city"
         }
 
 
