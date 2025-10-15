@@ -1,8 +1,8 @@
 import express from "express"
 
-import { getDetails, getFilterData, postAddCollege, deleteCollegeByName,updateCollegeByName,patchCollegeByName } from "../controllers/controller.js"
+import { getDetails, getFilterData, postAddCollege, deleteCollegeByName,updateCollegeByName,patchCollegeByName} from "../controllers/controller.js"
 
-import { getAllColleges, getRandomCollege ,getCollegeName} from "../controllers/controller.js"
+import { getAllColleges, getRandomCollege ,getCollegeName,getCollegeInstitudeCode,getCollegesBasedOnFoundedRange } from "../controllers/controller.js"
 
 let router = express.Router()
 
@@ -18,8 +18,14 @@ router.get("/randomCollege", getRandomCollege)
 // GET Method router for filtering the collge
 router.get("/filter", getFilterData)
 
+// GET Method router for college institude_code
+router.get("/collegeCode/:institude_Code",getCollegeInstitudeCode)
+
 // GET Method router for college name
-router.get("/college/:name", getCollegeName)
+router.get("/collegeName/:name", getCollegeName)
+
+// GET Method router for college founded year or range in year
+router.get("/collegeFounded/:start/:end", getCollegesBasedOnFoundedRange)
 
 //POST Method router for adding new collge
 router.post("/add-college",postAddCollege)

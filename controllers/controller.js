@@ -35,6 +35,11 @@ let getDetails = (req, res) => {
                 address: "localhost/colleges/api/collegeName",
                 expectedResult: "Array"
             },
+             {
+                method: "GET",
+                address: "localhost/colleges/api/collegeCode",
+                expectedResult: "Array"
+            },
             {
                 method: "POST",
                 address: "localhost/colleges/api/add-college",
@@ -119,7 +124,6 @@ const getFilterData = (req, res) => {
             resultCount: resultArray.length,
             results: resultArray
 
-
         })
 
     } catch (err) {
@@ -169,6 +173,29 @@ const getRandomCollege = (req, res) => {
 
 }
 
+// (GET method)
+// it's used to find college by using college institude code
+const getCollegeInstitudeCode = (req,res) => {
+    try {
+        let {institude_Code} = req.params
+        console.log(institude_Code)
+
+        if (!institude_Code) throw("Invalid Institude_Code !")
+
+            let result = colleges.filter((colleges) => {
+                return colleges.institute_Code == institude_Code
+            })
+
+        if (result.length == 0) throw( `Unable to find colleges.institude_code ${institude_Code}`)    
+
+        res.status(200).json({ message: `We have on institude_Code ${institude_Code} !`, result: result[0]})    
+
+    } catch(error) {
+        console.log(error)
+        res.status(400).json({ message: `unable to get data based on institude code ! `, error})
+
+    }
+}
 
 // (GET method)
 // it's used to find college by using college name
@@ -196,10 +223,53 @@ const getCollegeName = (req, res) => {
     }
 }
 
+// (GET method)
+// this is for filtering colleges by founded year range (using path params)
+
+const getCollegesBasedOnFoundedRange = (req,res) => {
+    try {
+        let {start, end} = req.params 
+        console.log(`Founded range: ${start} - ${end}`)
+
+        //validation as our own choice
+        if (!start) throw ("Please provide at least one year!")
+
+        // convert string to number
+        start = Number(start) //for start
+        end = end ? Number(end) : start;    // if end not given,then start as same
+
+        // check for invalid number
+        if (isNaN(start) || isNaN(end)) throw ("Founded year(s) must be valid numbers!")
+
+        // filter by range
+        let result = colleges.filter((college) => {
+            let foundedYear = Number(college.founded);
+            return foundedYear >= start && foundedYear <= end;});    
+
+        if (result.length === 0) throw (`No colleges founded between ${start} and ${end}!`);    
+
+        res.status(200).json({
+            message: `Colleges founded between ${start} and ${end}`,
+            total: result.length,
+            result
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            message: "Unable to get data based on founded year range!",
+            err
+        });
+    }
+}
+
+
+
+
 // export in GET method
 export { getDetails }
+
 // export in GET method
-export { getAllColleges, getRandomCollege, getFilterData, getCollegeName }
+export { getAllColleges, getRandomCollege, getFilterData, getCollegeInstitudeCode, getCollegeName,getCollegesBasedOnFoundedRange }
 
 // (post method)
 // we can add data from post method
