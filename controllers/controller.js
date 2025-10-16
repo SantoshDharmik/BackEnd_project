@@ -1,10 +1,26 @@
-import  colleges  from "../data/colleges.js"
+// import  colleges  from "../data/colleges.js"
 //these code for api conncetion which is present in the folder,that is data.
+
+import {collegesModel} from "../models/techSchema.js"
+
+let colleges = []
+
+async function fetchInitialColleges() {
+    try {
+        colleges = await collegesModel.find({})
+
+    }catch (error){
+        console.log(err)
+        colleges = []
+    }
+}
+
+fetchInitialColleges()
 
 // we are writing getdetails for to better understand for filtering the data 
 let getDetails = (req, res) => {
     res.status(200).json({
-        message: "Welcome to College Filtering API, you can search/query for engineering colleges in Nagpur region based on courses, NIRF ranking, college status, and location. You can also search for a particular college based on its name or filter colleges offering specific branches like Computer Science, Mechanical, AI/ML, etc.",
+        message: "Welcome to College Filtering API, you can search/query for engineering colleges in Maharashtra region based on courses, NIRF ranking, college status, and location. You can also search for a particular college based on its institude-code/name or filter colleges offering specific branches like Computer Science, Mechanical, AI/ML, etc.",
 
         routes: [
             // it's shows all colleges data which is present in the datase 
@@ -137,26 +153,27 @@ const getFilterData = (req, res) => {
     }
 }
 
-
-// (GET method)
+// (GET method) done
 // these is for all colleges dada 
-const getAllColleges = (req, res) => {
-    try {
-        const resultArray = colleges; // store data we are use for count all colleges
+const getAllColleges = async (req,res) => {
+    try{
+        let dataBaseColleges = await collegesModel.find({})
 
-        res.status(200).json({
-            message: `All the colleges within the dataset are`, 
-        resultCount: resultArray.length,
-        results: resultArray
-        })
-        
+        if(dataBaseColleges.lenght == 0) throw ("unable to fetch all colleges at this moment !")
 
-    }catch(err) {
-        res.status(500).json({ message: "Something went wrong!", err });
+            res.status(200).json({ message: 'all the colleges within the dataset are.', dataBaseColleges})
+
+    } catch(error){
+        console.log("error while fetching colleges : ", error)
+        res.status(500).json({ message: "unable to find colleges", error })
+
     }
 }
 
-// (GET method)
+
+
+ 
+// (GET method) // pending
 // it's used to get any random college
 const getRandomCollege = (req, res) => {
 
@@ -273,7 +290,7 @@ export { getAllColleges, getRandomCollege, getFilterData, getCollegeInstitudeCod
 
 // (post method)
 // we can add data from post method
-const postAddCollege = (req, res) => {
+const postAddCollege = async (req, res) => {
     try {
         let { name, courses, duration, fees_per_year, address, status, NIRF_ranking } = req.body
 
@@ -284,17 +301,15 @@ const postAddCollege = (req, res) => {
 
         if (!Array.isArray(courses)) throw ("invalid data courses hass to be an array")
 
-        let newCollege = { name, courses, duration, fees_per_year, address, status, NIRF_ranking }
+        let newTech = new collegesModel({institude_code,name, courses, duration, fees_per_year, address, status, NIRF_ranking  })
 
-        colleges.push(newCollege)
+        await newTech.save()
 
-        res.status(202).json({
-            message: `New college ${newCollege.name} addedd successfully !`
-        })
+        fetchInitialColleges()
 
-    } catch (err) {
-        console.log('err while adding n new languages !', err)
-        res.status(400).json({ message: `unable to new language !`, err })
+    } catch (error) {
+        console.log('err while adding n new colleges !', error)
+        res.status(400).json({ message: `unable to new college !`, error })
     }
 }
 // export in POST method
