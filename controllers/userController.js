@@ -304,6 +304,74 @@ let handleUserLogin = async (req, res) => {
   }
 }
 
+let handleResetPasswordRequest = async (req, res) => {
+  try {
+
+    let { email } = req.body
+
+    if (!email) throw ("invalid/incomplete data !")
+
+    let userExists = await userModel.findOne({ "email.userEmail": email })
+
+    if (!userExists) throw ("invalid email address/Please register first !")
+
+    let result = await sendOTPForPasswordReset(email)
+
+    if (!result.status) throw (`unable to send otp at ${email} | ${result.message}`)
+
+    res.status(201).json({ message: `An OTP sent to your email ${email} | valid for 5 mins to reset your password !` })
+
+
+  } catch (err) {
+    console.log("password reset request failed !", err)
+    res.status(400).json({ message: "password reset request failed !", err })
+
+  }
+}
+
+let handleOTPForPasswordReset = async (req, res) => {
+  try {
+
+    let { email, userOtp, newPassword } = req.body;
+
+    if (!email || !userOtp || !newPassword)
+      return res.status(400).json({ message: "Email, OTP and new password are required!" });
+
+    //check if email exits
+    let emailExits = await userModel.findOne({ "email.userEmail": email })
+
+    if (!emailExits) throw (`email ${email} is not registerd !`)
+
+    let storedOtp = await redisClient.get(`emailPasswordReset:${email}`)
+
+    if (!storedOtp) throw ("otp is expried/not found !")
+
+    if (storedOtp.toString().trim() !== userOtp.toString().trim()) throw ("invalid otp !");
+
+    console.log('otp matched successfully for password reset !')
+
+    // encrypt
+
+    let hash = await bcrypt.hash(newPassword, 10)
+
+    // change verification status to true
+    let updateUserObject = await userModel.updateOne({ "email.userEmail": email },
+      { $set: { "password": hash } })
+
+    console.log("Password updated:", updateUserObject)
+
+    // remove the temprary otp
+    redisClient.del(`emailPasswordReset:${email}`)
+
+    res.status(202).json({ message: "otp verified successfully and password has been changed please head to login !" })
+
+  } catch (err) {
+    console.log("error while verifying the otp : ", err)
+    res.status(500).json({ message: "failed to verify user otp please try again later !", err })
+  }
+}
+
+
 
 
 
