@@ -225,6 +225,45 @@ let handleUserRegister = async (req, res) => {
   }
 }
 
+let handleOTPVerification = async (req, res) => {
+  try {
+    let { email, userOtp } = req.body
+
+    //check if email exit
+    let emailExits = await userModel.findOne({
+      "email.userEmail": email
+    })
+
+    if (!emailExits) throw (`email ${email} is not registred !`)
+
+    let storeOtp = await
+      redisClient.get(`email:${email}`)
+
+    if (!storeOtp) throw ("otp is expried/not found !")
+
+    if (storeOtp.toString() !== userOtp.toString()) throw ("invalid otp !")
+
+    console.log('otp matched successfully !')
+
+    // change verification status to true
+    let updateUserObject = await userModel.updateOne(
+      { "email.userEmail": email }, { $set: { "email.verified": true } })
+
+    console.log(updateUserObject)
+
+    // remove the temp otp
+
+    redisClient.del(`email:${email}`)
+
+    res.status(202).json({ message: "otp verified successfully please head to login !" })
+
+  } catch (err) {
+    console.log("error while verifying the otp : ", err)
+    res.status(500).json({ message: "failed to verify user otp please try again later !", err })
+
+  }
+}
+
 
 
 
