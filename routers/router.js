@@ -2,9 +2,9 @@ import express from "express"
 
 import {checkAdmin} from "../middlewares/checkAdmin.js"
 
-import { getDetails, getFilterData, postAddCollege, deleteInstituteByCode,updateInstituteByCode,patchCollegeByName} from "../controllers/controller.js"
+import {postAddCollege, deleteInstituteByCode,updateInstituteByCode,patchCollegeByName} from "../controllers/controller.js"
 
-import { getAllColleges, getRandomCollege ,getCollegeName,getCollegeInstituteCode,getCollegesBasedOnFoundedRange } from "../controllers/controller.js"
+import {  getDetails, getFilterData, getAllColleges, getRandomCollege ,getCollegeName,getCollegeInstituteCode,getCollegesBasedOnFoundedRange } from "../controllers/controller.js"
 
 let router = express.Router()
 
@@ -12,7 +12,7 @@ let router = express.Router()
 router.get("/get-details", getDetails)
 
 // GET Method router for all college
-router.get("/all",checkAdmin,getAllColleges)
+router.get("/all",getAllColleges)
 
 // GET Method router for random college
 router.get("/randomCollege", getRandomCollege)
@@ -28,6 +28,8 @@ router.get("/collegeName/:name", getCollegeName)
 
 // GET Method router for college founded year or range in year
 router.get("/collegeFounded/:start/:end", getCollegesBasedOnFoundedRange)
+
+// without checkAdmin these routers are not working 
 
 //POST Method router for adding new collge
 router.post("/add-college",checkAdmin,postAddCollege)

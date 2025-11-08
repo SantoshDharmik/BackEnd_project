@@ -4,26 +4,30 @@ import {userModel} from "../models/userSchema.js"
 
 
 let checkAdmin = async (req, res, next) => {
-    try {
-        let { token } = req.headers
+       try{
+        let userToken = req.headers.authorization
 
-        if (!token) throw ("not a valid token !")
+        if (!userToken) throw ("token not found/invalid token !") 
 
-        let decode = jwt.verify(token, process.env.JWT_SECRET)    
+            // verify
 
-        let validUser = await userModel.findOne({ "email": decode.email })
+            let result = jwt.verify(userToken, process.env.JWT_SECRET)
 
-        if (!validUser) throw ("not a valid user !")
+            let user = await userModel.findOne({"email.userEmail": result.email})
 
-        req.user = validUser
+            if (!user) throw ("user not found !")
 
-        //to perform step by step procces in code
-        next()
+                if (!user.email.verified) throw ('Email not verified please verify the email first to perform this action !')
 
-    } catch (error) {
-         console.log("error from checkAdmin middleware : ", error)
-        res.status(401).json({ message: "failed to execute process !", error })
+                    req.user = user
+                    
+                next()
 
+
+
+    } catch(err) {
+        console.log("auth failed with an error : ", err)
+        res.status(401).json({ message: "auth admin failed please login !" })
     }
 }
 

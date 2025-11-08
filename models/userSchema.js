@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 
+let addressObject = {
+    street: "", city: "", state: "", country: "", pincode: ""
+}
+
+let emailObject = {
+    userEmail: "", verify : false
+}
+
+
 let usersSchema = mongoose.Schema({
     name: {
         type: String,
@@ -10,13 +19,15 @@ let usersSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    email: {
-        type: String,
-        require: true
+    email:{
+        type: Object,
+        required:true,
+        default: emailObject
     },
     address: {
-        type: String,
-        require: true
+        type: Object,
+        required: true,
+        default: addressObject
     },
     password: {
         type: String,
