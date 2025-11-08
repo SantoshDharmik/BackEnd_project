@@ -264,6 +264,46 @@ let handleOTPVerification = async (req, res) => {
   }
 }
 
+let handleUserLogin = async (req, res) => {
+  try {
+    let { email, password } = req.body
+
+    let userExists = await userModel.findOne({
+      "email.userEmail": email
+    })
+
+    if (!userExists) throw ("unable to find the email please register the user first !")
+
+    if (!userExists.email.verified) {
+
+      //to send otp
+      let result = await sendOTP(email)
+
+      if (!result.status) throw (`unable to send otp at ${email} | ${result.message}`)
+
+      // redirect user to email verification route
+
+      throw (`user email is not verfied we have sent an otp at ${email} please verify your email !`)
+    }
+
+    //compare password 
+    let result = await bcrypt.compare(password, userExists.password)
+
+    if (!result) throw ("invalid email/password !")
+
+    // create jwt and send to user 
+
+    let token = await jwt.sign({ email }, process.env.JWT_SECRET
+      , { expiresIn: "2hr" })
+
+    res.status(202).json({ message: `welcome user ${userExists.name} ! login was successfull.`, token })
+
+  } catch (err) {
+    console.log("error while login : ", err)
+    res.status(400).json({ message: "unable to login", err })
+  }
+}
+
 
 
 
