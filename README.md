@@ -49,13 +49,18 @@ It provides powerful **filtering, search, and management features** for college 
 
 backend_project/
 ├── controllers/
+
 │ ├── collegeController.js
 ├── routes/
+
 │ ├── collegeRoutes.js
 ├── models/
+
 │ ├── collegeModel.js
 ├── server.js
+
 ├── package.json
+
 └── README.md
 
 
